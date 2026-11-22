@@ -67,6 +67,6 @@ const byCharacter = new Map(readings.map(([character,meaning,sound])=>[character
 export const rows = groups.flatMap(group=>[...group.characters].map(character=>({character,category:group.name}))).map(({character,category},order)=>{
   const reading=byCharacter.get(character);
   if(!reading)throw new Error(`훈음이 없는 한자: ${character}`);
-  return {id:character,character,...reading,category,grade:8,order,origin:null,evolution:[],sources:['https://www.hanja.re.kr','https://funsoft.co.kr/hanja/table/8/'],verification:'공식 배정표 대조 대기'};
+  return {id:character,character,...reading,category,grade:8,order,sources:['https://www.hanja.re.kr','https://funsoft.co.kr/hanja/table/8/'],verification:'공식 배정표 대조 대기'};
 });
 if(rows.length!==readings.length||new Set(rows.map(row=>row.id)).size!==readings.length)throw new Error('한자 주제에 빠지거나 중복된 글자가 있습니다.');
