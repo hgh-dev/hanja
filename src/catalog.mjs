@@ -1,5 +1,5 @@
 // Candidate grade-eight list; official Korean assignment/reading cross-check pending.
-export const rows = `校 학교 교
+const readings = `校 학교 교
 敎 가르칠 교
 九 아홉 구
 國 나라 국
@@ -48,4 +48,25 @@ export const rows = `校 학교 교
 學 배울 학
 韓 나라 한
 兄 형 형
-火 불 화`.split('\n').map((s,i)=>{const [character,meaning,sound]=s.split(' ');return {id:character,character,meaning,sound,grade:8,order:i,origin:null,evolution:[],sources:['https://www.hanja.re.kr','https://funsoft.co.kr/hanja/table/8/'],verification:'공식 배정표 대조 대기'};});
+火 불 화`.split('\n').map(s=>s.split(' '));
+
+// The order of these groups is also the previous/next learning sequence.
+// Weekdays follow the Korean calendar convention: Monday through Sunday.
+export const groups = [
+  {name:'숫자', characters:'一二三四五六七八九十萬'},
+  {name:'요일', characters:'月火水木金土日'},
+  {name:'방향과 위치', characters:'東西南北中外'},
+  {name:'가족과 사람', characters:'人父母兄弟女'},
+  {name:'학교와 공부', characters:'校學敎室'},
+  {name:'자연과 색', characters:'山白靑'},
+  {name:'나라와 사회', characters:'國韓民軍'},
+  {name:'크기와 길이', characters:'大小少長寸'},
+  {name:'시간과 생활', characters:'年生先門'},
+];
+const byCharacter = new Map(readings.map(([character,meaning,sound])=>[character,{meaning,sound}]));
+export const rows = groups.flatMap(group=>[...group.characters].map(character=>({character,category:group.name}))).map(({character,category},order)=>{
+  const reading=byCharacter.get(character);
+  if(!reading)throw new Error(`훈음이 없는 한자: ${character}`);
+  return {id:character,character,...reading,category,grade:8,order,origin:null,evolution:[],sources:['https://www.hanja.re.kr','https://funsoft.co.kr/hanja/table/8/'],verification:'공식 배정표 대조 대기'};
+});
+if(rows.length!==readings.length||new Set(rows.map(row=>row.id)).size!==readings.length)throw new Error('한자 주제에 빠지거나 중복된 글자가 있습니다.');
