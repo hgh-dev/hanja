@@ -1,0 +1,53 @@
+# 설아의 한자 공부
+
+React 19 + TypeScript + Vite + Tailwind CSS로 만든 서버 없는 한국어 한자 학습 PWA입니다.
+
+## 실행
+
+Node.js 22 이상에서:
+
+```sh
+npm ci --cache /tmp/npm-cache
+npm run dev
+```
+
+`npm run build`는 타입 검사와 프로덕션 빌드를 실행합니다. `npm run preview -- --port 4173`으로 빌드를 확인할 수 있습니다. PWA 설치와 오프라인 캐시는 HTTPS 또는 localhost에서 프로덕션 빌드를 한 번 열어 서비스 워커가 설치된 뒤 작동합니다. 첫 방문에는 인터넷이 필요합니다.
+
+## 구현
+
+- 홈 진도, 마지막 한자 이어보기, 50자 목록과 완료/미학습 필터
+- 한자 학습, 완료/해제, 이전/다음 이동
+- 로컬 SVG 획순 애니메이션 (49자), Pointer Events 기반 벡터 필기, 따라/혼자 쓰기, 지우개, 실행 취소/다시 실행/전체 지우기
+- 완료한 글자만 최대 10개 중복 없이 무작위 출제하는 두 가지 자가 채점 테스트
+- 정답 공개 후 채점, 오답 복습, 결과 및 날짜/유형/문제별 정오 기록
+- IndexedDB 저장, 저장 실패 안내, 테스트 이탈 확인, 반응형 화면, PWA 정적 자료 캐싱
+
+필기는 SVG 벡터로 구현해 화면 회전/고해상도에서도 좌표와 선명도를 유지합니다. 자동 필기 인식이나 자동 채점은 하지 않습니다. 필기 자체는 연습용이며 페이지 이동 시 초기화됩니다. 학습 기록은 브라우저 데이터 삭제 시 사라집니다.
+
+## 교육 자료의 한계 — 배포 전 검수 필요
+
+50자 목록과 훈음은 **공식 배정표 대조 전**입니다. 한국어문회(https://www.hanja.re.kr)와 참고 사이트(https://funsoft.co.kr/hanja/table/8/)가 환경에서 HTTP 403으로 차단되어 정확성을 독립 검증하지 못했습니다. 개수와 중복 검사는 교육 내용의 검증을 대신하지 않습니다.
+
+획수는 `hanzi-writer-data`의 실제 획 수에서 추출했습니다. 이 자료는 중국 자형 기준이므로 한국어문회 기준과 차이가 있을 수 있습니다. `敎`는 데이터셋에 없어 획수/획순을 미제공으로 표시하며 다른 자형으로 임의 대체하지 않았습니다. 조자 원리와 고문자 변천은 출처 검증 전까지 제공하지 않습니다. 각 데이터에 급수, 순서, 출처, 검증 상태 및 향후 자료 필드를 분리했습니다.
+
+Hanzi Writer 코드는 MIT, 획 데이터는 Make Me a Hanzi/Arphic 기반 Arphic Public License입니다. 원본 라이선스는 `public/STROKE-LICENSE.txt`에 포함되어 있습니다. 데이터 갱신 시 `node scripts/data.mjs`를 실행하세요.
+
+## 검증
+
+```sh
+npm test
+npm run build
+# 별도 터미널에서 npm run preview -- --port 4173 실행 후
+node scripts/browser-check.cjs
+```
+
+브라우저 검증은 `/usr/bin/chromium`을 사용합니다. 다른 환경에서는 해당 경로를 설치된 Chromium으로 조정하세요. 50자 고유성/획 데이터 일치, 출제 범위/중복/개수, 점수 계산을 단위 테스트합니다. 브라우저 검증은 필기/취소/재실행/화면 크기 변경, 학습 영속성, 두 테스트 유형, 결과 영속성, 모바일 가로 넘침, 오프라인 재접속/획 자료 로드를 확인합니다.
+
+후속 작업: 공식 한자 자료 대조, 한국 표준 획순 확인, 출처 있는 유래/변천 자료 추가, 실제 iPad/Android 펜 및 설치 동작 확인.
+
+## GitHub Pages 배포
+
+사이트 기본 경로는 `/hanja/`입니다. 로컬 미리보기도 `/hanja/`로 접속하세요.
+`main`에 푸시하면 GitHub Actions가 테스트와 빌드 후 생성된 정적 파일을 `gh-pages` 브랜치에 게시합니다.
+저장소 Settings → Pages에서 Source를 **Deploy from a branch**, Branch를 **gh-pages / (root)**로 설정하세요.
+예정 주소: https://hgh-dev.github.io/hanja/

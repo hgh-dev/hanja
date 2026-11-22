@@ -1,0 +1,5 @@
+import {useEffect,useRef,useState} from 'react';
+import HanziWriter from 'hanzi-writer';
+export default function Stroke({char}:{char:string}){const el=useRef<HTMLDivElement>(null);const writer=useRef<HanziWriter|null>(null);const [status,setStatus]=useState('불러오는 중');const [busy,setBusy]=useState(false);
+useEffect(()=>{let live=true;const controller=new AbortController();fetch(`${import.meta.env.BASE_URL}strokes/${char}.json`,{signal:controller.signal}).then(r=>{if(!r.ok)throw Error();return r.json();}).then(data=>{if(!live)return;writer.current=HanziWriter.create(el.current!,char,{width:240,height:240,padding:15,strokeColor:'#437c60',charDataLoader:()=>data});setStatus('');}).catch(()=>{if(live)setStatus('이 글자의 획순 자료는 준비 중이에요.');});return ()=>{live=false;controller.abort();writer.current?.pauseAnimation();el.current?.replaceChildren();};},[char]);
+return <div className="stroke"><div ref={el}/>{status?<p>{status}</p>:<button disabled={busy} onClick={async()=>{setBusy(true);try{await writer.current?.animateCharacter();}finally{setBusy(false);}}}>▶ 획순 보기 · 다시 보기</button>}<small>Hanzi Writer 중국 자형 자료 · 한국 표준 획순과 다를 수 있어요.</small></div>}
