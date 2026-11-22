@@ -51,3 +51,9 @@ node scripts/browser-check.cjs
 `main`에 푸시하면 GitHub Actions가 테스트와 빌드 후 생성된 정적 파일을 `gh-pages` 브랜치에 게시합니다.
 저장소 Settings → Pages에서 Source를 **Deploy from a branch**, Branch를 **gh-pages / (root)**로 설정하세요.
 예정 주소: https://hgh-dev.github.io/hanja/
+
+## 자동 업데이트
+
+앱이 열려 있으면 새 버전을 1분마다 확인하며, 다시 전면으로 돌아오거나 인터넷 연결이 복구될 때도 확인합니다. 새 서비스 워커가 설치되면 열린 앱을 자동으로 새로고침합니다. 새로고침 시 진행 중인 필기나 아직 제출하지 않은 테스트는 초기화될 수 있습니다. 서비스 워커는 앱을 처음 연 뒤 설치되므로 최초 방문에는 기존 버전이 없습니다.
+
+로컬 검증: 프로덕션 미리보기를 실행하고 `node scripts/update-check.cjs`를 실행하면 업데이트 설치 후 자동 새로고침을 확인합니다.

@@ -1,3 +1,4 @@
+import './pwa';
 import React,{useEffect,useState} from 'react';import{createRoot}from'react-dom/client';import data from './data.json';import {groups} from './catalog.mjs';import{read,save,empty,type Progress,type Result}from'./store';import{selectQuestions,score}from'./logic.mjs';import Writing from './Writing';import Stroke from './Stroke';import './style.css';
 type Page='home'|'list'|'learn'|'test'|'quiz'|'result'|'history';
 function App(){const[p,setP]=useState<Progress>(empty);const[ready,setReady]=useState(false);const[error,setError]=useState('');const[page,setPage]=useState<Page>('home');const[id,setId]=useState('山');const[filter,setFilter]=useState('전체');const[trace,setTrace]=useState(true);const[type,setType]=useState<'read'|'write'>('read');const[questions,setQuestions]=useState<string[]>([]);const[answers,setAnswers]=useState<Result['answers']>([]);const[revealed,setRevealed]=useState(false);const[offline,setOffline]=useState(navigator.onLine===false);
