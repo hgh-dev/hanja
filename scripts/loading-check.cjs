@@ -1,0 +1,3 @@
+const {chromium}=require('playwright');
+const assert=require('node:assert/strict');
+(async()=>{const browser=await chromium.launch({executablePath:'/usr/bin/chromium',args:['--no-sandbox']});try{const context=await browser.newContext({viewport:{width:360,height:800},isMobile:true,hasTouch:true});const page=await context.newPage();await page.route('**/assets/*.js',r=>r.abort());await page.goto(process.env.APP_URL||'http://localhost:4174/hanja/');await page.getByRole('button',{name:'다시 열기'}).waitFor({timeout:15000});assert(await page.getByText('앱을 불러오지 못했어요.',{exact:false}).isVisible());console.log('PASS: blocked JavaScript shows recovery instructions on mobile');}finally{await browser.close();}})().catch(e=>{console.error(e);process.exit(1)});
