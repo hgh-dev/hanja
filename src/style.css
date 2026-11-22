@@ -39,3 +39,26 @@
 .study-page .practice-panel{justify-content:center}.study-page .practice-work{flex:0 0 auto}@media(max-width:699px){.study-page .stroke-section .stroke>div{width:min(37vw,160px)}.study-page .writing-section .writing{max-width:min(39vw,170px)}.study-page .writing-section .tabs button{min-height:39px}.study-page .practice-panel .tools button{min-height:40px}}
 @media(min-width:700px) and (max-width:1099px){.study-page .writing-section .writing{max-width:min(29vh,270px)}}
 @media(max-width:699px){body.study-mode .study-layout{grid-template-rows:clamp(117px,20vh,157px) minmax(0,1fr)}}
+/* Equal character/picture halves and aligned practice boards. */
+.study-page .memory-panel{flex-direction:column}
+.study-page .memory-panel .memory-content{display:grid;grid-template-columns:1fr;grid-template-rows:repeat(2,minmax(0,1fr));flex:1;min-height:0;width:100%;align-items:stretch}
+.study-page .memory-content .study-info{display:flex;flex-direction:column;align-items:center;justify-content:center;min-width:0;min-height:0}
+.study-page .memory-content .memory-picture{display:flex;align-items:center;justify-content:center;width:100%;height:100%;min-width:0;min-height:0;margin:0;padding:8px}
+.study-page .memory-panel details{flex:none;margin:5px 0 0}
+.study-page .practice-work{--study-board-size:min(18vw,240px);display:grid;grid-template-columns:repeat(2,minmax(0,1fr));grid-template-rows:auto auto auto;column-gap:10px;row-gap:3px;align-items:start;flex:0 0 auto;width:100%}
+.study-page .practice-work h3{font-size:15px;color:#477d60;margin:0;text-align:center}
+.study-page .stroke-mode{min-height:40px}
+.study-page .writing-mode.tabs{margin:0;display:flex;align-items:center;justify-content:center;gap:4px;min-height:40px}
+.study-page .writing-mode.tabs button{min-height:36px;padding:4px 8px;font-size:12px}
+.stroke-board,.writing-board{min-width:0;text-align:center}
+.study-page .stroke-board .stroke>div,.study-page .writing-board .writing{width:var(--study-board-size);max-width:100%;margin:0 auto}
+.study-page .stroke-board .stroke svg{width:100%;height:auto;display:block}
+.study-page .stroke-board .stroke button{font-size:12px;min-height:38px;padding:5px}
+.study-page .stroke-board .stroke small{font-size:10px;line-height:1.25;margin:5px 0}
+.study-page .writing-board .tools{margin:6px 0;gap:3px}
+.study-page .writing-board .tools button{min-height:36px;padding:4px 6px}
+@media(min-width:1100px) and (max-height:1050px){.study-page .practice-work{--study-board-size:min(28vh,235px)}}
+@media(min-width:700px) and (max-width:1099px){.study-page .practice-work{--study-board-size:min(17vw,180px);grid-template-columns:repeat(2,minmax(0,1fr));grid-template-rows:auto auto auto;gap:3px}.study-page .stroke-board .stroke small{display:none}.study-page .memory-content .big-char{font-size:clamp(78px,15vh,135px)}.study-page .memory-content .memory-art{height:clamp(70px,11vh,110px)}}
+@media(min-width:700px) and (max-width:1099px) and (max-height:720px){.study-page .practice-work{--study-board-size:min(24vh,160px);grid-template-columns:repeat(2,minmax(0,1fr));grid-template-rows:auto auto auto}}
+@media(max-width:699px){.study-page .memory-panel{flex-direction:column}.study-page .memory-panel .memory-content{grid-template-columns:repeat(2,minmax(0,1fr));grid-template-rows:1fr}.study-page .memory-content .study-info{width:100%}.study-page .memory-content .memory-picture{width:100%;height:100%;margin:0;flex-direction:column}.study-page .practice-work{--study-board-size:min(39vw,170px);grid-template-columns:repeat(2,minmax(0,1fr));grid-template-rows:auto auto auto;column-gap:3px;row-gap:2px}.study-page .practice-work h3{font-size:12px}.study-page .stroke-mode,.study-page .writing-mode.tabs{min-height:38px}.study-page .writing-mode.tabs button{min-height:36px;padding:2px 4px;font-size:10px}.study-page .stroke-board .stroke button{font-size:10px;min-height:34px;padding:2px}.study-page .stroke-board .stroke small{display:none}.study-page .writing-board .tools button{font-size:10px;min-height:38px;padding:3px 4px}}
+@media(min-width:700px) and (max-width:1099px) and (min-height:721px){.study-page .practice-work{--study-board-size:min(20vw,195px)}}
