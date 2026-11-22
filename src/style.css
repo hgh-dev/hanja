@@ -64,3 +64,10 @@
 @media(min-width:700px) and (max-width:1099px) and (min-height:721px){.study-page .practice-work{--study-board-size:min(20vw,195px)}}
 
 .update-notice{position:fixed;z-index:1000;top:max(8px,env(safe-area-inset-top));right:12px;max-width:calc(100vw - 24px);display:flex;align-items:center;gap:12px;padding:12px 16px;border:1px solid #a1b995;border-radius:16px;background:#fffdf4;box-shadow:0 5px 24px #25452e33}.update-notice strong{font-size:14px}.update-notice small{display:block;font-size:11px;margin-top:4px}.update-notice button{white-space:nowrap;font-size:13px;padding:10px 14px;min-height:44px}@media(max-width:420px){.update-notice{gap:7px;padding:10px}.update-notice small{max-width:170px}.update-notice button{padding:8px}}
+
+.hanja-glyph{display:inline-block;width:1em;height:1em;vertical-align:middle;flex:none}.big-char .hanja-glyph,.answer-char .hanja-glyph{display:block;margin:auto}
+
+body{-webkit-touch-callout:none;-webkit-user-select:none;user-select:none}
+.study-page .practice-work{--study-board-size:min(17vh,160px);grid-template-columns:minmax(0,1fr);grid-template-rows:repeat(5,auto);row-gap:2px;justify-items:center}.study-page .practice-work .stroke-title{grid-row:1}.study-page .stroke-board{grid-row:2;width:100%}.study-page .practice-work .writing-title{grid-row:3}.study-page .writing-mode{grid-row:4}.study-page .writing-board{grid-row:5;width:100%}.study-page .stroke-mode{display:none}.study-page .stroke-board .stroke small,.study-page .practice-panel>small{display:none}.study-page .writing-board .tools{flex-wrap:nowrap;margin:3px 0}.study-page .practice-panel>h2{margin:0 0 4px}
+@media(max-width:699px){.study-page .practice-work{--study-board-size:min(13vh,110px)}.study-page .writing-mode.tabs{min-height:32px}.study-page .writing-mode.tabs button{min-height:32px}.study-page .stroke-board .stroke button{min-height:30px}.study-page .writing-board .tools button{min-height:32px}}
+@media(min-width:700px) and (min-height:1050px){.study-page .practice-work{--study-board-size:min(21vh,240px)}}

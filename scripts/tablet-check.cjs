@@ -16,11 +16,11 @@ const assert=require('node:assert/strict');
       assert(layout.panels.every(([scroll,client])=>scroll<=client),`${width}×${height}: panel clips content`);
       if(width<700)assert(Math.abs(layout.character.width-layout.picture.width)<1,`${width}×${height}: unequal horizontal halves`);
       else assert(Math.abs(layout.character.height-layout.picture.height)<1,`${width}×${height}: unequal vertical halves`);
-      assert(Math.abs(layout.stroke.top-layout.writing.top)<1,`${width}×${height}: writing boards are misaligned`);
+      assert(layout.stroke.bottom<=layout.writing.top,`${width}×${height}: stroke board must be above writing board`);
       await page.getByRole('button',{name:'다음 →'}).click();
       await page.getByText('그림으로 기억해요').waitFor();
       await page.close();
     }
-    console.log('PASS: phone and tablet halves, aligned writing boards, no scrolling');
+    console.log('PASS: phone and tablet halves, stacked writing boards, no scrolling');
   }finally{await browser.close();}
 })().catch(error=>{console.error(error);process.exit(1)});

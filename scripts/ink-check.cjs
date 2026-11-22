@@ -8,6 +8,7 @@ const assert=require('node:assert/strict');
  await page.getByRole('button',{name:'첫 한자 만나러 가기'}).click();
  const svg=page.locator('.writing svg');
  async function pixels(){return svg.evaluate(async el=>{const clone=el.cloneNode(true);clone.setAttribute('width','400');clone.setAttribute('height','400');const img=new Image();img.src='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(new XMLSerializer().serializeToString(clone));await img.decode();const c=document.createElement('canvas');c.width=c.height=400;const ctx=c.getContext('2d');ctx.drawImage(img,0,0);return [...ctx.getImageData(0,0,400,400).data];});}
+ await svg.locator('[data-glyph-paths]').waitFor();
  const original=await pixels();let point;
  for(let y=100;y<300&&!point;y++)for(let x=100;x<300;x++){const i=(y*400+x)*4;if(original[i]===225&&original[i+1]===223&&original[i+2]===214&&original[i+3]===255){point={x,y,i};break;}}
  assert(point,'find an opaque guide pixel');
