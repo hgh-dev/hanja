@@ -14,8 +14,8 @@ const assert=require('node:assert/strict');
  assert(point,'find an opaque guide pixel');
  async function stroke(){const r=await svg.boundingBox();await page.mouse.move(r.x+(point.x-15)/400*r.width,r.y+point.y/400*r.height);await page.mouse.down();await page.mouse.move(r.x+(point.x+15)/400*r.width,r.y+point.y/400*r.height,{steps:6});await page.mouse.up();}
  await stroke();let current=await pixels();assert.deepEqual(current.slice(point.i,point.i+4),[41,46,43,255],'ink must cover guide');
- await page.locator('.trace-practice').getByRole('button',{name:'지우개',exact:true}).click();await stroke();current=await pixels();assert.deepEqual(current.slice(point.i,point.i+4),original.slice(point.i,point.i+4),'eraser reveals unchanged guide');
- await page.locator('.trace-practice').getByRole('button',{name:'✎ 펜',exact:true}).click();await stroke();current=await pixels();assert.deepEqual(current.slice(point.i,point.i+4),[41,46,43,255],'new ink can cover erased area');
+ await page.locator('.shared-writing-tools').getByRole('button',{name:'지우개',exact:true}).click();await stroke();current=await pixels();assert.deepEqual(current.slice(point.i,point.i+4),original.slice(point.i,point.i+4),'eraser reveals unchanged guide');
+ await page.locator('.shared-writing-tools').getByRole('button',{name:'✎ 펜',exact:true}).click();await stroke();current=await pixels();assert.deepEqual(current.slice(point.i,point.i+4),[41,46,43,255],'new ink can cover erased area');
  console.log('PASS: ink above guide, eraser preserves guide, redraw after erasing');
  }finally{await browser.close();}
 })().catch(e=>{console.error(e);process.exit(1)});

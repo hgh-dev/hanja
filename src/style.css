@@ -99,3 +99,6 @@ body{-webkit-touch-callout:none;-webkit-user-select:none;user-select:none}
 .study-page .stroke-board .stroke>div{width:var(--stroke-board-size,var(--study-board-size))}
 .study-page .writing-pair .tools{gap:2px;flex-wrap:nowrap}
 .study-page .writing-pair .tools button{font-size:10px;padding:2px 3px;min-height:34px}
+.study-page .practice-work{grid-template-rows:auto auto auto auto}
+.study-page .shared-writing-tools{grid-row:4;margin:0;gap:8px;justify-content:center;flex-wrap:nowrap}
+.study-page .shared-writing-tools button{min-height:40px;padding:4px 16px;font-size:13px}

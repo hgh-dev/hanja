@@ -1,11 +1,12 @@
 import {GlyphPaths} from './Glyph';
 import {useId,useRef,useState} from 'react';
 type Stroke={points:[number,number][];erase:boolean};
-export default function Writing({guide=''}:{guide?:string}){
+export default function Writing({guide='',eraseMode,showTools=true}:{guide?:string;eraseMode?:boolean;showTools?:boolean}){
   const maskPrefix=useId().replace(/:/g,'');
   const pathFor=(s:Stroke)=>s.points.map((p,j)=>`${j?'L':'M'}${p.join(' ')}`).join(' ')+(s.points.length===1?'l0.1 0':'');
   const [lines,setLines]=useState<Stroke[]>([]);
-  const [erase,setErase]=useState(false);
+  const [localErase,setErase]=useState(false);
+  const erase=eraseMode??localErase;
   const active=useRef<number|null>(null);
   const svg=useRef<SVGSVGElement>(null);
   function point(e:React.PointerEvent):[number,number]{
@@ -27,5 +28,5 @@ export default function Writing({guide=''}:{guide?:string}){
     <defs>{lines.map((s,i)=>!s.erase&&lines.slice(i+1).some(line=>line.erase)?<mask key={i} id={`${maskPrefix}-${i}`} maskUnits="userSpaceOnUse" x="0" y="0" width="400" height="400"><rect width="400" height="400" fill="white"/>{lines.slice(i+1).map((later,j)=>later.erase?<path key={j} d={pathFor(later)} fill="none" stroke="black" strokeWidth="25" strokeLinecap="round" strokeLinejoin="round"/>:null)}</mask>:null)}</defs>
     {/* Only later eraser strokes mask this ink. The guide and new ink stay intact. */}
     <g data-ink="true">{lines.map((s,i)=>!s.erase?<path key={i} d={pathFor(s)} fill="none" stroke="#292e2b" strokeWidth="6" strokeLinecap="round" strokeLinejoin="round" mask={lines.slice(i+1).some(line=>line.erase)?`url(#${maskPrefix}-${i})`:undefined}/>:null)}</g>
-  </svg></div><div className="tools"><button className={!erase?'selected':''} onClick={()=>setErase(false)}>✎ 펜</button><button className={erase?'selected':''} onClick={()=>setErase(true)}>지우개</button><button onClick={()=>setLines([])}>모두 지우기</button></div></div>;
+  </svg></div>{showTools&&<div className="tools"><button className={!erase?'selected':''} onClick={()=>setErase(false)}>✎ 펜</button><button className={erase?'selected':''} onClick={()=>setErase(true)}>지우개</button><button onClick={()=>setLines([])}>모두 지우기</button></div>}</div>;
 }
