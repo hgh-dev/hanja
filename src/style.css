@@ -107,3 +107,17 @@ body{-webkit-touch-callout:none;-webkit-user-select:none;user-select:none}
 .study-page .bottom-actions .completion-reset{background:transparent;border:1px solid #bcc3bd;color:#59645d;box-shadow:none;font-size:12px;padding:6px 10px;min-height:40px;white-space:nowrap}
 .study-page .bottom-actions .completion-reset:hover{background:#ecefe9}
 @media(max-width:699px){.completion-control{gap:5px}.completion-badge{font-size:12px;padding:5px 8px}.study-page .bottom-actions .completion-reset{font-size:11px;padding:5px 6px}}
+/* A compact vocabulary bridge between recognition and handwriting. */
+.recognition-column{display:grid;grid-template-rows:minmax(0,1fr) auto;gap:6px;min-width:0;min-height:0}
+.word-examples{display:flex;align-items:center;gap:8px}
+.word-examples{min-width:0;min-height:0;align-self:stretch;padding:4px 8px;border:1px solid #e8dcc5;border-radius:16px;background:#fff7e7;text-align:center}
+.word-examples h2{font-size:13px;color:#805f2f;margin:0;white-space:nowrap}
+.word-buttons{display:flex;flex:1;flex-direction:row;gap:6px}
+.word-buttons button{display:flex;align-items:center;justify-content:center;flex:1;gap:4px;min-width:0;min-height:40px;padding:6px 9px;border:1px solid #e4cfaa;border-radius:10px;background:white;color:#684e29;font-size:14px;font-weight:700;white-space:nowrap}
+.word-buttons button:hover{background:#fff0cb}.word-buttons button span{font-size:12px;color:#99784b}
+.word-dialog{position:fixed;inset:0;width:min(440px,calc(100vw - 32px));max-height:calc(100dvh - 32px);margin:auto;padding:24px;border:1px solid #e8dcc5;border-radius:22px;background:#fffdf7;color:#303e35;box-shadow:0 16px 64px #0003;text-align:left;overflow:auto}
+.word-dialog::backdrop{background:#20352e88}
+.word-dialog-heading{display:flex;justify-content:space-between;align-items:center;gap:12px}.word-dialog-heading h2{font-size:28px;margin:0}.word-dialog-heading button{min-height:44px;padding:8px 12px;background:#edf1e7;font-size:14px}
+.word-spelling{font-size:32px;letter-spacing:5px;margin:16px 0 22px}.word-spelling mark{background:#fae3ac;color:#684e29;border-radius:6px;padding:2px 4px}
+.word-dialog h3{font-size:15px;color:#477d60}.word-dialog p{font-size:17px;line-height:1.7;color:#39483d;margin:6px 0 20px}.word-dialog p:last-child{margin-bottom:0}
+@media(max-width:699px){body.study-mode .study-layout{grid-template-columns:minmax(0,1fr);grid-template-rows:calc(clamp(117px,20vh,157px) + 56px) minmax(0,1fr);gap:6px}.word-examples{align-self:stretch;display:flex;align-items:center;gap:8px;padding:4px 8px;border-radius:12px}.word-examples h2{margin:0;font-size:11px}.word-buttons{flex:1;flex-direction:row;gap:6px}.word-buttons button{flex:1;justify-content:center;font-size:12px;padding:4px;min-height:40px}.word-dialog{padding:20px}}
