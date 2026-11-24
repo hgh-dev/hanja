@@ -14,7 +14,7 @@ export default function useStudySizing(active:boolean){
       const available=panel.clientHeight-parseFloat(s.paddingTop)-parseFloat(s.paddingBottom);
       const fixed=[':scope > h2','.stroke-title','.writing-board h3','.stroke-controls','.stroke p','.stroke small','.shared-writing-tools'].reduce((sum,sel)=>sum+outer(panel.querySelector(sel)),0);
       const work=panel.querySelector<HTMLElement>('.practice-work');
-      if(work){const columns=work.querySelectorAll('.writing-board').length||1;const writingSize=Math.min((work.clientWidth-8*(columns-1))/columns,(available-fixed-8)/2);set(work,'--study-board-size',writingSize);set(work,'--stroke-board-size',Math.min(work.clientWidth,available-fixed-8-writingSize));}
+      if(work){const columns=work.querySelectorAll('.writing-board').length;const writingSize=columns?Math.min((work.clientWidth-8*(columns-1))/columns,(available-fixed-8)/2):0;set(work,'--study-board-size',writingSize);set(work,'--stroke-board-size',Math.min(work.clientWidth,available-fixed-8-writingSize));}
       const ps=getComputedStyle(picture);
       const artSpace=picture.clientHeight-parseFloat(ps.paddingTop)-parseFloat(ps.paddingBottom)-outer(picture.querySelector('.memory-copy'))-4;
       set(picture,'--memory-art-size',Math.min(picture.clientWidth-parseFloat(ps.paddingLeft)-parseFloat(ps.paddingRight),artSpace));

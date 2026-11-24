@@ -1,7 +1,14 @@
+import {PencilSound} from './pencilSound';
+import {useSettings} from './settings';
+import {useEffect} from 'react';
 import {GlyphPaths} from './Glyph';
 import {useId,useRef,useState} from 'react';
 type Stroke={points:[number,number][];erase:boolean};
 export default function Writing({guide='',eraseMode,showTools=true}:{guide?:string;eraseMode?:boolean;showTools?:boolean}){
+  const {sound:audible}=useSettings();
+  const pencil=useRef(new PencilSound());
+  useEffect(()=>()=>pencil.current.dispose(),[]);
+  useEffect(()=>{if(!audible)pencil.current.stop();},[audible]);
   const maskPrefix=useId().replace(/:/g,'');
   const pathFor=(s:Stroke)=>s.points.map((p,j)=>`${j?'L':'M'}${p.join(' ')}`).join(' ')+(s.points.length===1?'l0.1 0':'');
   const [lines,setLines]=useState<Stroke[]>([]);
@@ -16,13 +23,14 @@ export default function Writing({guide='',eraseMode,showTools=true}:{guide?:stri
   return <div><div className="writing"><svg ref={svg} viewBox="0 0 400 400" aria-label="손가락이나 펜으로 한자를 쓰는 공간" onPointerDown={e=>{
     if(active.current!==null)return;
     active.current=e.pointerId;
+    if(!erase&&audible){pencil.current.unlock();pencil.current.start();}
     e.currentTarget.setPointerCapture(e.pointerId);
     setLines(l=>[...l,{points:[point(e)],erase}]);
   }} onPointerMove={e=>{
     if(active.current!==e.pointerId)return;
     const p=point(e);
     setLines(l=>l.map((s,i)=>i===l.length-1?{...s,points:[...s.points,p]}:s));
-  }} onPointerUp={()=>{active.current=null;}} onPointerCancel={()=>{active.current=null;}}>
+  }} onPointerUp={()=>{active.current=null;pencil.current.stop();}} onPointerCancel={()=>{active.current=null;pencil.current.stop();}} onLostPointerCapture={()=>pencil.current.stop()}>
     <path d="M200 0V400M0 200H400M0 0L400 400M400 0L0 400" stroke="#e7e3d9" strokeDasharray="6 8"/>
     <g data-guide={guide} fill="#e1dfd6" pointerEvents="none"><GlyphPaths character={guide}/></g>
     <defs>{lines.map((s,i)=>!s.erase&&lines.slice(i+1).some(line=>line.erase)?<mask key={i} id={`${maskPrefix}-${i}`} maskUnits="userSpaceOnUse" x="0" y="0" width="400" height="400"><rect width="400" height="400" fill="white"/>{lines.slice(i+1).map((later,j)=>later.erase?<path key={j} d={pathFor(later)} fill="none" stroke="black" strokeWidth="25" strokeLinecap="round" strokeLinejoin="round"/>:null)}</mask>:null)}</defs>

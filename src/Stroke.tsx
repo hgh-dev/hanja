@@ -1,7 +1,7 @@
 import {useEffect,useRef,useState} from 'react';
 import HanziWriter from 'hanzi-writer';
 import {PencilSound} from './pencilSound';
-import {useSettings,changeSetting} from './settings';
+import {useSettings} from './settings';
 export default function Stroke({char}:{char:string}){
   const el=useRef<HTMLDivElement>(null);
   const writer=useRef<HanziWriter|null>(null);
@@ -56,9 +56,5 @@ export default function Stroke({char}:{char:string}){
       if(run.current===token){sound.current.stop();playing.current=false;setBusy(false);}
     }
   }
-  function toggleSound(){
-    const next=!enabledRef.current;enabledRef.current=next;changeSetting('sound',next);
-    if(next)sound.current.unlock();else sound.current.stop();
-  }
-  return <div className="stroke"><div className="stroke-canvas" ref={el}/>{status?<p>{status}</p>:<div className="stroke-controls"><button disabled={busy} onClick={()=>void animate()}>▶ 획순 보기 · 다시 보기</button><button className="stroke-sound" aria-pressed={enabled} onClick={toggleSound}>연필 소리 {enabled?'켜짐':'꺼짐'}</button></div>}<small>Hanzi Writer 중국 자형 자료 · 한국 표준 획순과 다를 수 있어요.</small></div>;
+  return <div className="stroke"><div className="stroke-canvas" ref={el}/>{status?<p>{status}</p>:<div className="stroke-controls"><button disabled={busy} onClick={()=>void animate()}>▶ 획순 보기 · 다시 보기</button></div>}<small>Hanzi Writer 중국 자형 자료 · 한국 표준 획순과 다를 수 있어요.</small></div>;
 }
