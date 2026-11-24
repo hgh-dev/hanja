@@ -36,22 +36,22 @@ const assert=require('node:assert/strict');
       await page.getByRole('button',{name:'다음 →'}).click();
       assert.equal(await buttons.first().textContent(),'백색＋');
       assert.equal(errors.length,0,errors.join('\n'));
-      await page.close();
+      await page.context().close();
     }
-    // All 50 characters are reachable and ship their word explanations offline.
+    // All 150 characters are reachable and ship their word explanations offline.
     const page=await browser.newPage();
     await page.goto(process.env.APP_URL||'http://localhost:4174/hanja/');
     await page.getByRole('button',{name:'한자 공부',exact:true}).click();
     await page.locator('.hanja-card').first().click();
     await page.context().setOffline(true);
-    for(let i=0;i<50;i++){
+    for(let i=0;i<150;i++){
       assert.equal(await page.locator('.word-buttons button').count(),2);
       await page.locator('.word-buttons button').first().click();
       await page.getByRole('dialog').waitFor();
       assert((await page.locator('.word-dialog p').first().innerText()).length>0);
       await page.getByRole('button',{name:'단어 설명 닫기'}).click();
-      if(i<49)await page.getByRole('button',{name:'다음 →'}).click();
+      if(i<149)await page.getByRole('button',{name:'다음 →'}).click();
     }
-    console.log('PASS: vocabulary strip placement, popup content/closing/focus, all 50 characters offline');
+    console.log('PASS: vocabulary strip placement, popup content/closing/focus, all 150 characters offline');
   }finally{await browser.close();}
 })().catch(e=>{console.error(e);process.exit(1)});

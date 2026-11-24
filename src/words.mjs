@@ -1,3 +1,5 @@
+import {rows} from './catalog.mjs';
+import {extraWords} from './extra-words.mjs';
 // Child-friendly examples: word, Hanja spelling, meaning, and explanation.
 const entries = `一|일등|一等|첫 번째 등수예요.|一은 하나를 뜻해요. 달리기에서 가장 먼저 들어오면 일등이에요.
 一|일주일|一週日|월요일부터 일요일까지, 7일이에요.|一은 하나를 뜻해요. 요일이 한 바퀴 도는 시간을 말해요.
@@ -104,4 +106,14 @@ export const words = {};
 for (const line of entries.split('\n')) {
   const [character, label, spelling, meaning, explanation] = line.split('|');
   (words[character] ??= []).push({label, spelling, meaning, explanation});
+}
+
+// Reuse words across their constituent characters, while explaining the selected one.
+const pool = [...new Map([...Object.values(words).flat().map(word=>({...word, example:word.explanation})), ...extraWords].map(word=>[word.label, word])).values()];
+for (const row of rows) {
+  if (words[row.id]) continue;
+  words[row.id] = pool.filter(word=>word.spelling.includes(row.id)).slice(0,2).map(word=>({
+    label:word.label, spelling:word.spelling, meaning:word.meaning,
+    explanation:`${row.character}(${row.meaning} ${row.sound})이 들어간 말이에요. ${word.example}`,
+  }));
 }

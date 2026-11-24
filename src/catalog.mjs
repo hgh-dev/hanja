@@ -1,4 +1,5 @@
-// Candidate grade-eight list; official Korean assignment/reading cross-check pending.
+// Korean Eomunhoe grade grouping; reference details in CATALOG-SOURCES.md.
+import {grade7Readings} from './grade7.mjs';
 const readings = `校 학교 교
 敎 가르칠 교
 九 아홉 구
@@ -26,7 +27,7 @@ const readings = `校 학교 교
 西 서녘 서
 先 먼저 선
 小 작을 소
-少 적을 소
+王 임금 왕
 水 물 수
 室 집 실
 十 열 십
@@ -59,14 +60,27 @@ export const groups = [
   {name:'가족과 사람', characters:'人父母兄弟女'},
   {name:'학교와 공부', characters:'校學敎室'},
   {name:'자연과 색', characters:'山白靑'},
-  {name:'나라와 사회', characters:'國韓民軍'},
-  {name:'크기와 길이', characters:'大小少長寸'},
+  {name:'나라와 사회', characters:'國韓民軍王'},
+  {name:'크기와 길이', characters:'大小長寸'},
   {name:'시간과 생활', characters:'年生先門'},
 ];
+export const grade7Groups = [
+  {name:'숫자와 셈', characters:'百千數算'},
+  {name:'계절과 시간', characters:'春夏秋冬夕午時每'},
+  {name:'방향과 위치', characters:'上下左右前後內間方平直'},
+  {name:'가족과 사람', characters:'家男子夫祖老姓名主孝'},
+  {name:'몸과 마음', characters:'口手足面心命力'},
+  {name:'학교와 말', characters:'字文語話問答記歌紙漢'},
+  {name:'자연과 색', characters:'天地川江海林花草植色空氣電然'},
+  {name:'마을과 생활', characters:'里村洞邑市場所道車農工食物住事世旗'},
+  {name:'움직임과 상태', characters:'出入來登動活休立育自有不安全少重便同正'},
+];
 const byCharacter = new Map(readings.map(([character,meaning,sound])=>[character,{meaning,sound}]));
-export const rows = groups.flatMap(group=>[...group.characters].map(character=>({character,category:group.name}))).map(({character,category},order)=>{
-  const reading=byCharacter.get(character);
+const grade7ByCharacter = new Map(grade7Readings.map(([character,meaning,sound])=>[character,{meaning,sound}]));
+export const gradeGroups = [{grade:8, groups}, {grade:7, groups:grade7Groups}];
+export const rows = gradeGroups.flatMap(({grade,groups:topics})=>topics.flatMap(group=>[...group.characters].map(character=>({character,category:group.name,grade})))).map(({character,category,grade},order)=>{
+  const reading=(grade===8?byCharacter:grade7ByCharacter).get(character);
   if(!reading)throw new Error(`훈음이 없는 한자: ${character}`);
-  return {id:character,character,...reading,category,grade:8,order,sources:['https://www.hanja.re.kr','https://funsoft.co.kr/hanja/table/8/'],verification:'공식 배정표 대조 대기'};
+  return {id:character,character,...reading,category,grade,order,sources:['https://www.hanja.re.kr','https://github.com/hsun1022011/hanja_7-8','https://github.com/hellossook/hanja7'],verification:'공개 학습 목록 대조 · 공식 배정표 재확인 대기'};
 });
-if(rows.length!==readings.length||new Set(rows.map(row=>row.id)).size!==readings.length)throw new Error('한자 주제에 빠지거나 중복된 글자가 있습니다.');
+if(rows.length!==150||new Set(rows.map(row=>row.id)).size!==150||rows.filter(r=>r.grade===8).length!==50)throw new Error('한자 주제에 빠지거나 중복된 글자가 있습니다.');

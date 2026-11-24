@@ -20,7 +20,7 @@ const assert=require('node:assert/strict');
       assert(layout.stroke.bottom<=layout.writing.top,`${width}×${height}: stroke board must be above writing board`);
       await page.getByRole('button',{name:'다음 →'}).click();
       await page.getByText('그림으로 기억해요').waitFor();
-      await page.close();
+      await page.context().close();
     }
     console.log('PASS: phone and tablet halves, stacked writing boards, no scrolling');
   }finally{await browser.close();}
