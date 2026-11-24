@@ -12,7 +12,7 @@ export default function useStudySizing(active:boolean){
     const measure=()=>{
       const s=getComputedStyle(panel);
       const available=panel.clientHeight-parseFloat(s.paddingTop)-parseFloat(s.paddingBottom);
-      const fixed=[':scope > h2','.stroke-title','.writing-board h3','.stroke button','.stroke p','.stroke small','.shared-writing-tools'].reduce((sum,sel)=>sum+outer(panel.querySelector(sel)),0);
+      const fixed=[':scope > h2','.stroke-title','.writing-board h3','.stroke-controls','.stroke p','.stroke small','.shared-writing-tools'].reduce((sum,sel)=>sum+outer(panel.querySelector(sel)),0);
       const work=panel.querySelector<HTMLElement>('.practice-work');
       if(work){const writingSize=Math.min((work.clientWidth-8)/2,(available-fixed-8)/2);set(work,'--study-board-size',writingSize);set(work,'--stroke-board-size',Math.min(work.clientWidth,available-fixed-8-writingSize));}
       const ps=getComputedStyle(picture);
