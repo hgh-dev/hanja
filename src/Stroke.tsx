@@ -1,8 +1,7 @@
 import {useEffect,useRef,useState} from 'react';
 import HanziWriter from 'hanzi-writer';
 import {PencilSound} from './pencilSound';
-const soundKey='hanja-pencil-sound';
-function readSound(){try{return localStorage.getItem(soundKey)!=='off';}catch{return true;}}
+import {useSettings,changeSetting} from './settings';
 export default function Stroke({char}:{char:string}){
   const el=useRef<HTMLDivElement>(null);
   const writer=useRef<HanziWriter|null>(null);
@@ -12,8 +11,9 @@ export default function Stroke({char}:{char:string}){
   const playing=useRef(false);
   const [status,setStatus]=useState('불러오는 중');
   const [busy,setBusy]=useState(false);
-  const [enabled,setEnabled]=useState(readSound);
+  const {sound:enabled}=useSettings();
   const enabledRef=useRef(enabled);
+  useEffect(()=>{enabledRef.current=enabled;if(!enabled)sound.current.stop();},[enabled]);
   useEffect(()=>{
     let live=true;
     const controller=new AbortController();
@@ -57,9 +57,8 @@ export default function Stroke({char}:{char:string}){
     }
   }
   function toggleSound(){
-    const next=!enabledRef.current;enabledRef.current=next;setEnabled(next);
+    const next=!enabledRef.current;enabledRef.current=next;changeSetting('sound',next);
     if(next)sound.current.unlock();else sound.current.stop();
-    try{localStorage.setItem(soundKey,next?'on':'off');}catch{/* Preference is optional. */}
   }
   return <div className="stroke"><div className="stroke-canvas" ref={el}/>{status?<p>{status}</p>:<div className="stroke-controls"><button disabled={busy} onClick={()=>void animate()}>▶ 획순 보기 · 다시 보기</button><button className="stroke-sound" aria-pressed={enabled} onClick={toggleSound}>연필 소리 {enabled?'켜짐':'꺼짐'}</button></div>}<small>Hanzi Writer 중국 자형 자료 · 한국 표준 획순과 다를 수 있어요.</small></div>;
 }
