@@ -154,6 +154,7 @@ body{-webkit-touch-callout:none;-webkit-user-select:none;user-select:none}
 @media(max-width:600px){.study-topic{font-size:11px;margin-left:3px;padding:2px 6px}.topic-actions button{font-size:12px;padding:6px 8px}}
 /* Tall portrait tablets: give stroke order and each writing board one full row. */
 @media(min-width:700px) and (max-width:1099px) and (min-height:1100px) and (orientation:portrait){
+ .study-page .memory-content .study-info .big-char{font-size:min(40vw,32vh,330px);line-height:1}
  .study-page .practice-work:has(.writing-pair){flex:1;min-height:0;grid-template-columns:minmax(0,1fr);grid-template-rows:auto minmax(0,1fr) minmax(0,2fr) auto;align-items:stretch;justify-items:stretch}
  .study-page .practice-work:has(.writing-pair) .stroke-board{display:flex;align-items:center;justify-content:center;min-height:0}
  .study-page .practice-work:has(.writing-pair) .stroke-board .stroke{width:100%;display:flex;flex-direction:column;align-items:center;justify-content:center}

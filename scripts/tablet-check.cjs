@@ -10,7 +10,7 @@ const assert=require('node:assert/strict');
       await page.locator('.stroke-board svg').waitFor();
       const layout=await page.evaluate(()=>{
         const rect=selector=>document.querySelector(selector).getBoundingClientRect();
-        return {pageHeight:document.documentElement.scrollHeight,viewportHeight:innerHeight,panels:[...document.querySelectorAll('.study-layout .panel')].map(el=>[el.scrollHeight,el.clientHeight]),character:rect('.memory-content .study-info').toJSON(),picture:rect('.memory-content .memory-picture').toJSON(),art:rect('.memory-art').toJSON(),caption:rect('.memory-copy').toJSON(),stroke:rect('.stroke-board svg').toJSON(),writing:rect('.trace-practice .writing').toJSON(),free:rect('.free-practice .writing').toJSON()};
+        return {pageHeight:document.documentElement.scrollHeight,viewportHeight:innerHeight,panels:[...document.querySelectorAll('.study-layout .panel')].map(el=>[el.scrollHeight,el.clientHeight]),character:rect('.memory-content .study-info').toJSON(),glyph:rect('.memory-content .big-char').toJSON(),description:rect('.memory-content .study-info p').toJSON(),picture:rect('.memory-content .memory-picture').toJSON(),art:rect('.memory-art').toJSON(),caption:rect('.memory-copy').toJSON(),stroke:rect('.stroke-board svg').toJSON(),writing:rect('.trace-practice .writing').toJSON(),free:rect('.free-practice .writing').toJSON()};
       });
       assert(layout.pageHeight<=layout.viewportHeight,`${width}×${height}: page scrolls`);
       assert(layout.panels.every(([scroll,client])=>scroll<=client),`${width}×${height}: panel clips content`);
@@ -19,6 +19,8 @@ const assert=require('node:assert/strict');
       assert(layout.art.bottom<=layout.caption.top+1,`${width}×${height}: picture overlaps caption`);
       assert(layout.stroke.bottom<=layout.writing.top,`${width}×${height}: stroke board must be above writing board`);
       if(height>=1100&&width>=700&&width<=1099){
+        assert(layout.glyph.width>=layout.character.width*.8,`${width}×${height}: character does not fill its area`);
+        assert(layout.glyph.top>=layout.character.top&&layout.description.bottom<=layout.character.bottom,`${width}×${height}: character content clips`);
         assert(layout.writing.bottom<=layout.free.top,`${width}×${height}: writing boards must stack`);
         assert(Math.abs(layout.stroke.width-layout.writing.width)<2&&Math.abs(layout.writing.width-layout.free.width)<2,`${width}×${height}: three boards must share the available size`);
         assert(layout.stroke.width>=250,`${width}×${height}: portrait boards are too small`);
