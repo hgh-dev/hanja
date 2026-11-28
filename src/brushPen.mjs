@@ -1,9 +1,9 @@
-// A fixed, angled elliptical nib makes stroke direction the main source of width.
-const MAJOR = 5.2;
-const MINOR = 2.1;
-const ANGLE = -Math.PI / 4;
+// Simulate a flexible brush tip using movement alone, including on touch screens.
+const BRUSH_RADIUS = 5.2;
+const DOT_RADIUS = 3.2;
 const STEP = 2;
 const clamp = (value, low, high) => Math.min(high, Math.max(low, value));
+const smoothstep = value => value * value * (3 - 2 * value);
 const fmt = value => Number(value.toFixed(2));
 
 function interpolate(a, b, c, d, t) {
@@ -13,12 +13,11 @@ function interpolate(a, b, c, d, t) {
     (-a[i] + 3 * b[i] - 3 * c[i] + d[i]) * t3));
 }
 
-export function fountainPenPath(points) {
+export function brushPenPath(points) {
   if (!points.length) return '';
   if (points.length === 1) {
     const [x, y] = points[0];
-    const dx = MAJOR * Math.cos(ANGLE), dy = MAJOR * Math.sin(ANGLE);
-    return `M${fmt(x + dx)} ${fmt(y + dy)}A${MAJOR} ${MINOR} -45 1 0 ${fmt(x - dx)} ${fmt(y - dy)}A${MAJOR} ${MINOR} -45 1 0 ${fmt(x + dx)} ${fmt(y + dy)}Z`;
+    return `M${fmt(x + DOT_RADIUS)} ${fmt(y)}A${DOT_RADIUS} ${DOT_RADIUS} 0 1 0 ${fmt(x - DOT_RADIUS)} ${fmt(y)}A${DOT_RADIUS} ${DOT_RADIUS} 0 1 0 ${fmt(x + DOT_RADIUS)} ${fmt(y)}Z`;
   }
   const samples = [];
   for (let i = 0; i < points.length - 1; i++) {
@@ -34,20 +33,23 @@ export function fountainPenPath(points) {
     if (i) length += Math.hypot(sample.p[0] - samples[i - 1].p[0], sample.p[1] - samples[i - 1].p[1]);
     return length;
   });
-  if (length < 0.5) return fountainPenPath([points[0]]);
+  if (length < 0.5) return brushPenPath([points[0]]);
   const left = [], right = [];
   let previousWidth = null;
   for (let i = 0; i < samples.length; i++) {
     const before = samples[Math.max(0, i - 1)].p, after = samples[Math.min(samples.length - 1, i + 1)].p;
     const direction = Math.atan2(after[1] - before[1], after[0] - before[0]);
     const normal = direction + Math.PI / 2;
-    const delta = normal - ANGLE;
-    const nibWidth = Math.hypot(MAJOR * Math.cos(delta), MINOR * Math.sin(delta));
-    const speedFactor = 1 - 0.14 * clamp(samples[i].speed / 1.2, 0, 1);
-    const taper = 0.78 + 0.22 * clamp(Math.min(distances[i], length - distances[i]) / 10, 0, 1);
-    const target = nibWidth * speedFactor * taper;
-    const width = previousWidth === null ? target : previousWidth + 0.3 * (target - previousWidth);
-    previousWidth = width;
+    // The downward bias is gentle; speed supplies most of the brush variation.
+    const directionFactor = 0.94 + 0.12 * Math.max(0, Math.sin(direction));
+    const speedFactor = 1.27 - 0.55 * clamp(samples[i].speed / 1.5, 0, 1);
+    const target = BRUSH_RADIUS * directionFactor * speedFactor;
+    const smoothWidth = previousWidth === null ? target : previousWidth + 0.24 * (target - previousWidth);
+    previousWidth = smoothWidth;
+    const taperDistance = Math.min(14, length * 0.28);
+    const tipWidth = length < 16 ? 0.68 : 0.36;
+    const taperProgress = clamp(Math.min(distances[i], length - distances[i]) / taperDistance, 0, 1);
+    const width = smoothWidth * (tipWidth + (1 - tipWidth) * smoothstep(taperProgress));
     const nx = Math.cos(normal) * width, ny = Math.sin(normal) * width;
     left.push([samples[i].p[0] + nx, samples[i].p[1] + ny]);
     right.push([samples[i].p[0] - nx, samples[i].p[1] - ny]);
