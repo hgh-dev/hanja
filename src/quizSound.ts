@@ -1,8 +1,9 @@
-// The reveal cue is synthesized; a supplied audio clip celebrates correct answers.
+// The reveal cue is synthesized; supplied clips play for quiz judgments.
 export class QuizSound {
   private context?: AudioContext;
   private active = new Set<AudioScheduledSourceNode>();
   private correctAudio?: HTMLAudioElement;
+  private reviewAudio?: HTMLAudioElement;
 
   private async ready(): Promise<AudioContext | null> {
     try {
@@ -53,9 +54,32 @@ export class QuizSound {
     } catch { /* Quiz still works when media playback is unavailable. */ }
   }
 
+  preloadReview() {
+    if (this.reviewAudio) return;
+    try {
+      const audio = new Audio(`${import.meta.env.BASE_URL}sounds/learn-again.mp3`);
+      audio.preload = 'auto';
+      audio.volume = .7;
+      this.reviewAudio = audio;
+    } catch { /* Quiz still works when media playback is unavailable. */ }
+  }
+
   correct() {
     this.preloadCorrect();
+    this.reviewAudio?.pause();
     const audio = this.correctAudio;
+    if (!audio) return;
+    try {
+      audio.pause();
+      audio.currentTime = 0;
+      void audio.play().catch(() => {});
+    } catch { /* Quiz still works when media playback is unavailable. */ }
+  }
+
+  review() {
+    this.preloadReview();
+    this.correctAudio?.pause();
+    const audio = this.reviewAudio;
     if (!audio) return;
     try {
       audio.pause();
@@ -66,6 +90,7 @@ export class QuizSound {
 
   stop() {
     this.correctAudio?.pause();
+    this.reviewAudio?.pause();
     for (const source of this.active) {
       try { source.stop(); } catch { /* Already stopped. */ }
     }
