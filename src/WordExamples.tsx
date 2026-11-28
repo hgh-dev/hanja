@@ -12,7 +12,7 @@ export default function WordExamples({character}:{character:string}) {
   return <section className="word-examples" aria-label="이 한자가 들어간 단어">
     <h2>단어로 만나요</h2>
     <div className="word-buttons">{words[character].map(word =>
-      <button key={word.label} onClick={() => setSelected(word)} aria-haspopup="dialog">{word.label}<span aria-hidden="true">＋</span></button>
+      <button key={word.label} onClick={() => setSelected(word)} aria-haspopup="dialog">{word.label}<span>({word.spelling})</span></button>
     )}</div>
     <dialog ref={dialog} className="word-dialog" aria-labelledby="word-title" onClose={() => setSelected(null)} onClick={event => {
       if (event.target !== event.currentTarget) return;

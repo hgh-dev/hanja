@@ -162,3 +162,5 @@ body{-webkit-touch-callout:none;-webkit-user-select:none;user-select:none}
  .study-page .practice-work:has(.writing-pair) .writing-pair .writing-board{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:0}
  .study-page .practice-work:has(.writing-pair) .writing-pair .writing-board .writing{max-width:none}
 }
+.word-buttons button{flex-wrap:wrap;column-gap:4px;row-gap:0;white-space:normal}
+.word-buttons button span{white-space:nowrap}
