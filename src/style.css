@@ -164,3 +164,6 @@ body{-webkit-touch-callout:none;-webkit-user-select:none;user-select:none}
 }
 .word-buttons button{flex-wrap:wrap;column-gap:4px;row-gap:0;white-space:normal}
 .word-buttons button span{white-space:nowrap}
+.study-info .speak-glyph{padding:0;min-height:0;color:inherit;line-height:inherit}
+.study-info .speak-glyph:hover{background:transparent}
+.study-info .speak-glyph:disabled{opacity:1;cursor:default}
