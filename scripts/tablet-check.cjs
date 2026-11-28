@@ -3,14 +3,14 @@ const assert=require('node:assert/strict');
 (async()=>{
   const browser=await chromium.launch({executablePath:'/usr/bin/chromium',args:['--no-sandbox']});
   try{
-    for(const [width,height] of [[390,844],[412,915],[884,982],[982,884],[1280,800],[1280,720],[800,1280]]){
+    for(const [width,height] of [[390,844],[412,915],[884,982],[982,884],[1280,800],[1280,720],[800,1280],[900,1200]]){
       const page=await browser.newPage({viewport:{width,height},isMobile:true,hasTouch:true});
       await page.goto(process.env.APP_URL||'http://localhost:4174/hanja/');
       await page.getByRole('button',{name:'첫 한자 만나러 가기'}).click();
       await page.locator('.stroke-board svg').waitFor();
       const layout=await page.evaluate(()=>{
         const rect=selector=>document.querySelector(selector).getBoundingClientRect();
-        return {pageHeight:document.documentElement.scrollHeight,viewportHeight:innerHeight,panels:[...document.querySelectorAll('.study-layout .panel')].map(el=>[el.scrollHeight,el.clientHeight]),character:rect('.memory-content .study-info').toJSON(),picture:rect('.memory-content .memory-picture').toJSON(),art:rect('.memory-art').toJSON(),caption:rect('.memory-copy').toJSON(),stroke:rect('.stroke-board svg').toJSON(),writing:rect('.writing-board .writing').toJSON()};
+        return {pageHeight:document.documentElement.scrollHeight,viewportHeight:innerHeight,panels:[...document.querySelectorAll('.study-layout .panel')].map(el=>[el.scrollHeight,el.clientHeight]),character:rect('.memory-content .study-info').toJSON(),picture:rect('.memory-content .memory-picture').toJSON(),art:rect('.memory-art').toJSON(),caption:rect('.memory-copy').toJSON(),stroke:rect('.stroke-board svg').toJSON(),writing:rect('.trace-practice .writing').toJSON(),free:rect('.free-practice .writing').toJSON()};
       });
       assert(layout.pageHeight<=layout.viewportHeight,`${width}×${height}: page scrolls`);
       assert(layout.panels.every(([scroll,client])=>scroll<=client),`${width}×${height}: panel clips content`);
@@ -18,6 +18,11 @@ const assert=require('node:assert/strict');
       else assert(Math.abs(layout.character.height-layout.picture.height)<1,`${width}×${height}: unequal vertical halves`);
       assert(layout.art.bottom<=layout.caption.top+1,`${width}×${height}: picture overlaps caption`);
       assert(layout.stroke.bottom<=layout.writing.top,`${width}×${height}: stroke board must be above writing board`);
+      if(height>=1100&&width>=700&&width<=1099){
+        assert(layout.writing.bottom<=layout.free.top,`${width}×${height}: writing boards must stack`);
+        assert(Math.abs(layout.stroke.width-layout.writing.width)<2&&Math.abs(layout.writing.width-layout.free.width)<2,`${width}×${height}: three boards must share the available size`);
+        assert(layout.stroke.width>=250,`${width}×${height}: portrait boards are too small`);
+      }
       await page.getByRole('button',{name:'다음 →'}).click();
       await page.getByText('그림으로 기억해요').waitFor();
       await page.context().close();

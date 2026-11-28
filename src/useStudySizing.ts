@@ -14,7 +14,20 @@ export default function useStudySizing(active:boolean){
       const available=panel.clientHeight-parseFloat(s.paddingTop)-parseFloat(s.paddingBottom);
       const fixed=[':scope > h2','.stroke-title','.writing-board h3','.stroke-controls','.stroke p','.stroke small','.shared-writing-tools'].reduce((sum,sel)=>sum+outer(panel.querySelector(sel)),0);
       const work=panel.querySelector<HTMLElement>('.practice-work');
-      if(work){const columns=work.querySelectorAll('.writing-board').length;const writingSize=columns?Math.min((work.clientWidth-8*(columns-1))/columns,(available-fixed-8)/2):0;set(work,'--study-board-size',writingSize);set(work,'--stroke-board-size',Math.min(work.clientWidth,available-fixed-8-writingSize));}
+      if(work){
+        const columns=work.querySelectorAll('.writing-board').length;
+        const tabletPortrait=columns===2&&window.matchMedia('(min-width:700px) and (max-width:1099px) and (min-height:1100px) and (orientation:portrait)').matches;
+        if(tabletPortrait){
+          const secondHeading=outer(work.querySelectorAll('.writing-board h3')[1]);
+          const boardSize=Math.min(work.clientWidth,(available-fixed-secondHeading-18)/3);
+          set(work,'--study-board-size',boardSize);
+          set(work,'--stroke-board-size',boardSize);
+        }else{
+          const writingSize=columns?Math.min((work.clientWidth-8*(columns-1))/columns,(available-fixed-8)/2):0;
+          set(work,'--study-board-size',writingSize);
+          set(work,'--stroke-board-size',Math.min(work.clientWidth,available-fixed-8-writingSize));
+        }
+      }
       const ps=getComputedStyle(picture);
       const artSpace=picture.clientHeight-parseFloat(ps.paddingTop)-parseFloat(ps.paddingBottom)-outer(picture.querySelector('.memory-copy'))-4;
       set(picture,'--memory-art-size',Math.min(picture.clientWidth-parseFloat(ps.paddingLeft)-parseFloat(ps.paddingRight),artSpace));
