@@ -28,8 +28,9 @@ const assert=require('node:assert/strict');
     await page.getByRole('button',{name:'맞았어요 ✓'}).click();
     await page.waitForFunction(()=>window.quizAudio.claps.length===1);
     const cues=await page.evaluate(()=>window.quizAudio);
-    assert.deepEqual(cues.notes.map(Math.round),[523,659,784,1047]);
-    assert(cues.claps[0].duration>1&&cues.claps[0].loop===false);
+    assert.deepEqual(cues.notes.slice(0,4).map(Math.round),[523,659,784,1047]);
+    assert.equal(cues.notes.length,7,'three cheer voices should join the applause');
+    assert(cues.claps[0].duration>1.5&&cues.claps[0].loop===false);
 
     await page.getByRole('button',{name:'우리 집',exact:true}).click();
     await page.getByRole('button',{name:'⚙ 설정',exact:true}).click();
@@ -40,6 +41,6 @@ const assert=require('node:assert/strict');
     await page.getByRole('button',{name:'정답 확인'}).click();
     await page.getByRole('button',{name:'맞았어요 ✓'}).click();
     assert.deepEqual(await page.evaluate(()=>window.quizAudio),cues);
-    console.log('PASS: reveal chime, correct-answer applause, and effects mute');
+    console.log('PASS: reveal chime, applause with cheer voices, and effects mute');
   }finally{await browser.close();}
 })().catch(error=>{console.error(error);process.exit(1)});

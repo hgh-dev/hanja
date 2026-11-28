@@ -45,18 +45,26 @@ export class QuizSound {
   async applause() {
     const context = await this.ready();
     if (!context) return;
-    const duration = 1.35;
+    const duration = 1.65;
     const samples = context.createBuffer(1, Math.ceil(context.sampleRate * duration), context.sampleRate);
     const channel = samples.getChannelData(0);
-    // Unevenly spaced, overlapping handclaps sound like a small group cheering.
-    const times = [0, .09, .16, .27, .33, .41, .52, .59, .67, .76, .83, .92, 1.01, 1.1, 1.19];
-    for (const time of times) {
+    // A low, continuous crowd rustle joins longer, irregular handclaps.
+    let rustle = 0;
+    for (let i = 0; i < channel.length; i++) {
+      rustle = .88 * rustle + .12 * (Math.random() * 2 - 1);
+      const time = i / context.sampleRate;
+      channel[i] = rustle * .18 * Math.sin(Math.PI * time / duration);
+    }
+    const times = [0, .14, .29, .39, .55, .7, .82, .98, 1.11, 1.27, 1.39];
+    for (const [index, time] of times.entries()) {
       const start = Math.floor(time * context.sampleRate);
-      const length = Math.floor(.09 * context.sampleRate);
+      const length = Math.floor(.16 * context.sampleRate);
+      const strength = .28 + .08 * (index % 3);
       for (let i = 0; i < length && start + i < channel.length; i++) {
         const seconds = i / context.sampleRate;
-        const envelope = Math.exp(-seconds * 42) * (1 + .35 * Math.exp(-Math.max(0, seconds - .017) * 90));
-        channel[start + i] += (Math.random() * 2 - 1) * envelope;
+        const attack = Math.min(1, seconds / .012);
+        const envelope = attack * Math.exp(-seconds * 22);
+        channel[start + i] += (Math.random() * 2 - 1) * envelope * strength;
       }
     }
     const source = context.createBufferSource();
@@ -64,16 +72,49 @@ export class QuizSound {
     const lowpass = context.createBiquadFilter();
     const gain = context.createGain();
     source.buffer = samples;
-    highpass.type = 'highpass'; highpass.frequency.value = 550;
-    lowpass.type = 'lowpass'; lowpass.frequency.value = 4200;
+    highpass.type = 'highpass'; highpass.frequency.value = 250;
+    lowpass.type = 'lowpass'; lowpass.frequency.value = 2600;
     const now = context.currentTime;
-    gain.gain.setValueAtTime(.14, now);
-    gain.gain.linearRampToValueAtTime(.19, now + .35);
+    gain.gain.setValueAtTime(.1, now);
+    gain.gain.linearRampToValueAtTime(.19, now + .45);
     gain.gain.linearRampToValueAtTime(.01, now + duration);
     source.connect(highpass).connect(lowpass).connect(gain).connect(context.destination);
     this.track(source, [highpass, lowpass, gain]);
     source.start();
     source.stop(now + duration);
+
+    // Three slightly offset, vowel-shaped voices add a short “와아” cheer.
+    for (const [index, pitch] of [235, 280, 325].entries()) {
+      const start = now + .06 + index * .13;
+      const voice = context.createOscillator();
+      const lowFormant = context.createBiquadFilter();
+      const highFormant = context.createBiquadFilter();
+      const lowLevel = context.createGain();
+      const highLevel = context.createGain();
+      const voiceLevel = context.createGain();
+      voice.type = 'sawtooth';
+      voice.frequency.setValueAtTime(pitch * 1.08, start);
+      voice.frequency.linearRampToValueAtTime(pitch, start + .22);
+      voice.frequency.linearRampToValueAtTime(pitch * .94, start + .95);
+      lowFormant.type = 'bandpass'; lowFormant.Q.value = 1.2;
+      lowFormant.frequency.setValueAtTime(520, start);
+      lowFormant.frequency.linearRampToValueAtTime(850, start + .18);
+      highFormant.type = 'bandpass'; highFormant.Q.value = 1.4;
+      highFormant.frequency.setValueAtTime(1050, start);
+      highFormant.frequency.linearRampToValueAtTime(1350, start + .18);
+      lowLevel.gain.value = .55;
+      highLevel.gain.value = .35;
+      voiceLevel.gain.setValueAtTime(.001, start);
+      voiceLevel.gain.linearRampToValueAtTime(.09, start + .12);
+      voiceLevel.gain.setValueAtTime(.09, start + .58);
+      voiceLevel.gain.exponentialRampToValueAtTime(.001, start + 1.08);
+      voice.connect(lowFormant).connect(lowLevel).connect(voiceLevel);
+      voice.connect(highFormant).connect(highLevel).connect(voiceLevel);
+      voiceLevel.connect(context.destination);
+      this.track(voice, [lowFormant, highFormant, lowLevel, highLevel, voiceLevel]);
+      voice.start(start);
+      voice.stop(start + 1.09);
+    }
   }
 
   stop() {
