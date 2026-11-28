@@ -4,6 +4,7 @@ export class QuizSound {
   private active = new Set<AudioScheduledSourceNode>();
   private correctAudio?: HTMLAudioElement;
   private reviewAudio?: HTMLAudioElement;
+  private finishAudio?: HTMLAudioElement;
 
   private async ready(): Promise<AudioContext | null> {
     try {
@@ -64,9 +65,20 @@ export class QuizSound {
     } catch { /* Quiz still works when media playback is unavailable. */ }
   }
 
+  preloadFinish() {
+    if (this.finishAudio) return;
+    try {
+      const audio = new Audio(`${import.meta.env.BASE_URL}sounds/quiz-complete.mp3`);
+      audio.preload = 'auto';
+      audio.volume = .7;
+      this.finishAudio = audio;
+    } catch { /* Quiz still works when media playback is unavailable. */ }
+  }
+
   correct() {
     this.preloadCorrect();
     this.reviewAudio?.pause();
+    this.finishAudio?.pause();
     const audio = this.correctAudio;
     if (!audio) return;
     try {
@@ -79,7 +91,21 @@ export class QuizSound {
   review() {
     this.preloadReview();
     this.correctAudio?.pause();
+    this.finishAudio?.pause();
     const audio = this.reviewAudio;
+    if (!audio) return;
+    try {
+      audio.pause();
+      audio.currentTime = 0;
+      void audio.play().catch(() => {});
+    } catch { /* Quiz still works when media playback is unavailable. */ }
+  }
+
+  finish() {
+    this.preloadFinish();
+    this.correctAudio?.pause();
+    this.reviewAudio?.pause();
+    const audio = this.finishAudio;
     if (!audio) return;
     try {
       audio.pause();
@@ -91,6 +117,7 @@ export class QuizSound {
   stop() {
     this.correctAudio?.pause();
     this.reviewAudio?.pause();
+    this.finishAudio?.pause();
     for (const source of this.active) {
       try { source.stop(); } catch { /* Already stopped. */ }
     }
