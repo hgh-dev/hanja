@@ -16,7 +16,7 @@ test('brush width responds chiefly to speed with a gentle directional bias', () 
   const slow = widthAt([[50, 50, 0], [150, 150, 200]]);
   const upward = widthAt([[50, 150, 0], [150, 50, 200]]);
   const fast = widthAt([[50, 50, 0], [150, 150, 20]]);
-  assert(slow > fast * 1.3);
+  assert(slow > fast * 2);
   assert(slow > upward && slow < upward * 1.2);
 });
 

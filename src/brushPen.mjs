@@ -42,7 +42,8 @@ export function brushPenPath(points) {
     const normal = direction + Math.PI / 2;
     // The downward bias is gentle; speed supplies most of the brush variation.
     const directionFactor = 0.94 + 0.12 * Math.max(0, Math.sin(direction));
-    const speedFactor = 1.27 - 0.55 * clamp(samples[i].speed / 1.5, 0, 1);
+    const speedRatio = clamp(samples[i].speed / 1.5, 0, 1);
+    const speedFactor = 1.45 - 0.82 * speedRatio * speedRatio;
     const target = BRUSH_RADIUS * directionFactor * speedFactor;
     const smoothWidth = previousWidth === null ? target : previousWidth + 0.24 * (target - previousWidth);
     previousWidth = smoothWidth;
